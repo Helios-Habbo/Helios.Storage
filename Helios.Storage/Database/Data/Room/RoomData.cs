@@ -34,10 +34,9 @@ namespace Helios.Storage.Database.Data
         public virtual RoomKickSetting WhoCanKick { get; set; }
         public virtual RoomBanSetting WhoCanBan { get; set; }
 
-
         #region Constraints
 
-        public virtual PlayerData OwnerData { get; set; }
+        public virtual AvatarData OwnerData { get; set; }
         public virtual NavigatorCategoryData Category { get; set; }
         public virtual List<TagData> Tags { get; set; }
         public virtual PublicItemData PublicItem { get; set; }

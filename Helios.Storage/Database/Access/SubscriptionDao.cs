@@ -14,21 +14,21 @@ namespace Helios.Storage.Database.Access
         /// <summary>
         /// Get subscription by user id
         /// </summary>
-        public static SubscriptionData GetSubscription(int userId)
+        public static SubscriptionData GetSubscription(int avatarId)
         {
             using (var context = new StorageContext())
             {
-                return context.SubscriptionData.SingleOrDefault(x => x.UserId == userId);
+                return context.SubscriptionData.SingleOrDefault(x => x.AvatarId == avatarId);
             }
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
             //    SubscriptionData subscriptionDataAlias = null;
 
             //    return session.QueryOver(() => subscriptionDataAlias)
-            //        .Where(() => subscriptionDataAlias.UserId == userId)
+            //        .Where(() => subscriptionDataAlias.avatarId == avatarId)
             //        /*.And(() =>subscriptionDataAlias.ExpireDate > DateTime.Now )*/.SingleOrDefault();
             //}
-            return null;
+            //return null;
 
         }
 
@@ -39,14 +39,14 @@ namespace Helios.Storage.Database.Access
         {
             using (var context = new StorageContext())
             {
-                return context.SubscriptionGiftData.ToList();//.SingleOrDefault(x => x.UserId == userId);
+                return context.SubscriptionGiftData.ToList();//.SingleOrDefault(x => x.avatarId == avatarId);
             }
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
             //    return session.QueryOver<SubscriptionGiftData>().List() as List<SubscriptionGiftData>;
             //}
-            return null;
+            //return null;
 
         }
 
@@ -81,37 +81,36 @@ namespace Helios.Storage.Database.Access
         /// <summary>
         /// Save subscription by user id
         /// </summary>
-        public static void SaveSubscriptionExpiry(int userId, DateTime expiry)
+        public static void SaveSubscriptionExpiry(int avatarId, DateTime expiry)
         {
             using (var context = new StorageContext())
             {
-                context.SubscriptionData.Attach(new SubscriptionData { UserId = userId, ExpireDate = expiry }).Property(x => x.ExpireDate).IsModified = true;
+                context.SubscriptionData.Where(x => x.AvatarId == avatarId).UpdateFromQuery(x => new SubscriptionData { ExpireDate = expiry });
                 context.SaveChanges();
             }
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
-            //    session.Query<SubscriptionData>().Where(x => x.UserId == userId).Update(x => new SubscriptionData { ExpireDate = expiry });
+            //    session.Query<SubscriptionData>().Where(x => x.avatarId == avatarId).Update(x => new SubscriptionData { ExpireDate = expiry });
             //}
         }
 
         /// <summary>
         /// Save club duration by user id
         /// </summary>
-        public static void SaveSubscriptionAge(int userId, long clubAge, DateTime clubAgeLastUpdate)
+        public static void SaveSubscriptionAge(int avatarId, long clubAge, DateTime clubAgeLastUpdate)
         {
             using (var context = new StorageContext())
             {
-                var entity = context.SubscriptionData.Attach(new SubscriptionData { UserId = userId, SubscriptionAge = clubAge, SubscriptionAgeLastUpdated = clubAgeLastUpdate });
-                entity.Property(x => x.SubscriptionAge).IsModified = true;
-                entity.Property(x => x.SubscriptionAgeLastUpdated).IsModified = true;
+                context.SubscriptionData.Where(x => x.AvatarId == avatarId)
+                    .UpdateFromQuery(x => new SubscriptionData { SubscriptionAge = clubAge, SubscriptionAgeLastUpdated = clubAgeLastUpdate });
 
                 context.SaveChanges();
             }
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
-            //    session.Query<SubscriptionData>().Where(x => x.UserId == userId).Update(x => new SubscriptionData { SubscriptionAge = clubAge, SubscriptionAgeLastUpdated = clubAgeLastUpdate });
+            //    session.Query<SubscriptionData>().Where(x => x.avatarId == avatarId).Update(x => new SubscriptionData { SubscriptionAge = clubAge, SubscriptionAgeLastUpdated = clubAgeLastUpdate });
             //}
         }
 
@@ -133,18 +132,21 @@ namespace Helios.Storage.Database.Access
         /// <summary>
         /// Save how many gifts a user can redeem
         /// </summary>
-        public static void SaveGiftsRedeemable(int userId, int giftsRedeemable)
+        public static void SaveGiftsRedeemable(int avatarId, int giftsRedeemable)
         {
             using (var context = new StorageContext())
             {
-                var entity = context.SubscriptionData.Attach(new SubscriptionData { UserId = userId, GiftsRedeemable = giftsRedeemable });
-                entity.Property(x => x.GiftsRedeemable).IsModified = true;
+                //var entity = context.SubscriptionData.Attach(new SubscriptionData { avatarId = avatarId, GiftsRedeemable = giftsRedeemable });
+                //entity.Property(x => x.GiftsRedeemable).IsModified = true;
+                context.SubscriptionData.Where(x => x.AvatarId == avatarId)
+                    .UpdateFromQuery(x => new SubscriptionData { GiftsRedeemable = giftsRedeemable });
+                
                 context.SaveChanges();
             }
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
-            //    session.Query<SubscriptionData>().Where(x => x.UserId == userId).Update(x => new SubscriptionData { GiftsRedeemable = giftsRedeemable });
+            //    session.Query<SubscriptionData>().Where(x => x.avatarId == avatarId).Update(x => new SubscriptionData { GiftsRedeemable = giftsRedeemable });
             //}
         }
 
