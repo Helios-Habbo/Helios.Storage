@@ -1,10 +1,10 @@
-﻿using Helios.Storage.Models.Avatar;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using Helios.Storage.Models.Avatar;
 
 namespace Helios.Storage.Models.User
 {
-
     public class UserData
     {
         public virtual int Id { get; set; }
@@ -13,6 +13,7 @@ namespace Helios.Storage.Models.User
         public virtual string Birthday { get; set; }
         public virtual DateTime JoinDate { get; set; }
         public virtual DateTime LastOnline { get; set; }
+        public virtual bool DirectEmail { get; set; }
 
         #region Contraints
 

@@ -1,5 +1,5 @@
-﻿using Helios.Storage.Models.Avatar;
-using System;
+﻿using System;
+using Helios.Storage.Models.Avatar;
 
 namespace Helios.Storage.Models.Item
 {

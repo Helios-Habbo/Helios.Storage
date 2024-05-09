@@ -1,21 +1,27 @@
-﻿using Helios.Storage.Models.Item;
+﻿using Helios.Storage.Models.Group;
+using Helios.Storage.Models.Item;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Helios.Storage.Access
 {
-    public class GroupDao
+    public static class GroupDao
     {
-        /// <summary>
-        /// Get list of all definition data
-        /// </summary>
-        public static List<ItemDefinitionData> GetDefinitions()
+        public static GroupData GetGroup(this StorageContext context, int groupId)
         {
-            using (var context = new StorageContext())
-            {
-                return context.ItemDefinitionData.ToList();
-            }
+            return context.Groups.FirstOrDefault(x => x.Id == groupId);
+        }
 
+        public static List<GroupBadgeElementData> GetGroupBadgeElementData(this StorageContext context)
+        {
+            return context.GroupBadgeElementData.ToList();
+        }
+
+        public static void SaveGroup(this StorageContext context, GroupData groupData)
+        {
+            context.Groups.Update(groupData);
+            context.SaveChanges();
         }
     }
 }

@@ -1,7 +1,8 @@
-﻿using Helios.Storage.Models.Avatar;
+﻿using System.Collections.Generic;
+using Helios.Storage.Models.Avatar;
+using Helios.Storage.Models.Group;
 using Helios.Storage.Models.Misc;
 using Helios.Storage.Models.Navigator;
-using System.Collections.Generic;
 
 namespace Helios.Storage.Models.Room
 {
@@ -12,6 +13,7 @@ namespace Helios.Storage.Models.Room
         public virtual string Name { get; set; }
         public virtual string Description { get; set; }
         public virtual int CategoryId { get; set; }
+        public virtual int? GroupId { get; set; }
         public virtual RoomStatus Status { get; set; }
         public virtual string Password { get; set; }
         public virtual int ModelId { get; set; }
@@ -43,6 +45,8 @@ namespace Helios.Storage.Models.Room
         public virtual NavigatorCategoryData Category { get; set; }
         public virtual List<TagData> Tags { get; set; }
         public virtual PublicItemData PublicItem { get; set; }
+        public virtual GroupData GroupData { get; set; }
+        public virtual List<RoomRightsData> Rights { get; set; }
 
         #endregion
 

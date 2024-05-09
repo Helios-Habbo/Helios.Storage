@@ -1,14 +1,15 @@
 ﻿using Helios.Storage.Models.Misc;
 using Helios.Storage.Models.Room;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Helios.Storage.Access
 {
-    public class RoomDao
+    public static class RoomDao
     {
-        public static List<RoomData> SearchRooms(string query, int roomLimit = 50)
+        public static List<RoomData> SearchRooms(this StorageContext context, string query, int roomLimit = 50)
         {
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
@@ -26,8 +27,6 @@ namespace Helios.Storage.Access
             //        .List<RoomData>() as List<RoomData>;
             //}
 
-            using (var context = new StorageContext())
-            {
                 return context.RoomData
                     .Include(x => x.OwnerData)
                     .Include(x => x.Category)
@@ -39,14 +38,12 @@ namespace Helios.Storage.Access
                     .OrderByDescending(x => x.Rating)
                     .Take(roomLimit)
                     .ToList();
-            }
-
         }
 
         /// <summary>
         /// Search rooms by tag
         /// </summary>
-        public static List<RoomData> SearchTags(string tag, int roomLimit = 50)
+        public static List<RoomData> SearchTags(this StorageContext context, string tag, int roomLimit = 50)
         {
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
@@ -66,8 +63,6 @@ namespace Helios.Storage.Access
             //        .List<RoomData>() as List<RoomData>;
             //}
 
-            using (var context = new StorageContext())
-            {
                 return context.RoomData
                     .Include(x => x.OwnerData)
                     .Include(x => x.Tags)
@@ -78,14 +73,12 @@ namespace Helios.Storage.Access
                     .OrderByDescending(x => x.Rating)
                     .Take(roomLimit)
                     .ToList();
-            }
-
         }
 
         /// <summary>
         /// Get the list of users' own rooms
         /// </summary>
-        public static List<RoomData> GetPopularFlats(int resultsLimit = 50)
+        public static List<RoomData> GetPopularFlats(this StorageContext context, int resultsLimit = 50)
         {
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
@@ -101,8 +94,6 @@ namespace Helios.Storage.Access
             //        .List() as List<RoomData>;
             //}
 
-            using (var context = new StorageContext())
-            {
                 return context.RoomData
                     .Include(x => x.OwnerData)
                     .Include(x => x.Category)
@@ -112,14 +103,13 @@ namespace Helios.Storage.Access
                     .OrderByDescending(x => x.Rating)
                     .Take(resultsLimit)
                     .ToList();
-            }
 
         }
 
         /// <summary>
         /// Get the list of users' own rooms
         /// </summary>
-        public static List<RoomData> GetUserRooms(int avatarId)
+        public static List<RoomData> GetUserRooms(this StorageContext context, int avatarId)
         {
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
@@ -132,8 +122,7 @@ namespace Helios.Storage.Access
             //        .List() as List<RoomData>;
             //}
 
-            using (var context = new StorageContext())
-            {
+
                 return context.RoomData
                     .Include(x => x.OwnerData)
                     .Include(x => x.Category)
@@ -142,14 +131,13 @@ namespace Helios.Storage.Access
                     .OrderByDescending(x => x.UsersNow)
                     .OrderByDescending(x => x.Rating)
                     .ToList();
-            }
 
         }
 
         /// <summary>
         /// Get the list of users' own rooms
         /// </summary>
-        public static List<TagData> GetRoomTags(int roomId)
+        public static List<TagData> GetRoomTags(this StorageContext context, int roomId)
         {
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
@@ -157,74 +145,85 @@ namespace Helios.Storage.Access
             //    return session.QueryOver<TagData>(() => tagDataAlias).Where(() => tagDataAlias.RoomId == roomId).List() as List<TagData>;
             //}
 
-            using (var context = new StorageContext())
-            {
                 return context.TagData.Where(x => x.RoomId == roomId).ToList();
-            }
         }
 
         /// <summary>
         /// Count the rooms the user has.
         /// </summary>
-        public static int CountUserRooms(int avatarId)
+        public static int CountUserRooms(this StorageContext context, int avatarId)
         {
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
             //    return session.QueryOver<RoomData>().Where(x => x.OwnerId == avatarId).RowCount();
             //}
 
-            using (var context = new StorageContext())
-            {
                 return context.RoomData.Count(x => x.OwnerId == avatarId);
-            }
         }
 
         /// <summary>
         /// Get the room model data
         /// </summary>
         /// <returns></returns>
-        public static List<RoomModelData> GetModels()
+        public static List<RoomModelData> GetModels(this StorageContext context)
         {
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
             //    return session.QueryOver<RoomModelData>().List() as List<RoomModelData>;
             //}
-            using (var context = new StorageContext())
-            {
+
                 return context.RoomModelData.ToList();
-            }
         }
 
         /// <summary>
         /// Get data for room
         /// </summary>
-        public static RoomData GetRoomData(int roomId)
+        public static RoomData GetRoomData(this StorageContext context, int roomId)
         {
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
             //    return session.QueryOver<RoomData>().Where(x => x.Id == roomId).Take(1).SingleOrDefault();
             //}
-            using (var context = new StorageContext())
-            {
+  
                 return context.RoomData
                     .Include(x => x.OwnerData)
                     .Include(x => x.Category)
                     .Include(x => x.Tags)
                     .FirstOrDefault(x => x.Id == roomId);
-            }
-
         }
+
+        public static List<RoomRightsData> GetRoomRights(this StorageContext context, int roomId)
+        {
+            return context.RoomRightsData.Where(x => x.RoomId == roomId).ToList();
+        }
+
+        public static void ClearRoomRights(this StorageContext context, int roomId)
+        {
+             context.RoomRightsData.Where(x => x.RoomId == roomId).DeleteFromQuery();
+                context.SaveChanges();
+        }
+
+        public static void AddRights(this StorageContext context, int avatarId, int roomId)
+        {
+            context.RoomRightsData.Add(new RoomRightsData { AvatarId = avatarId, RoomId = roomId });
+            context.SaveChanges();
+        }
+
+        public static void RemoveRights(this StorageContext context, int avatarId, int roomId)
+        {
+            context.RoomRightsData.Where(x => x.RoomId == roomId && x.AvatarId == avatarId).DeleteFromQuery();
+            context.SaveChanges();
+        }
+
 
         /// <summary>
         /// Save room data
         /// </summary>
-        public static void SaveRoom(RoomData data)
+        public static void SaveRoom(this StorageContext context, RoomData data)
         {
-            using (var context = new StorageContext())
-            {
                 context.RoomData.Update(data);
                 context.SaveChanges();
-            }
+
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
             //    using (var transaction = session.BeginTransaction())
@@ -246,14 +245,10 @@ namespace Helios.Storage.Access
         /// <summary>
         /// New room data
         /// </summary>
-        public static void NewRoom(RoomData data)
+        public static void NewRoom(this StorageContext context, RoomData data)
         {
-
-            using (var context = new StorageContext())
-            {
                 context.RoomData.Add(data);
                 context.SaveChanges();
-            }
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
@@ -275,12 +270,10 @@ namespace Helios.Storage.Access
         /// <summary>
         /// Reset all visitors
         /// </summary>
-        public static void ResetVisitorCounts()
+        public static void ResetVisitorCounts(this StorageContext context)
         {
-            using (var context = new StorageContext())
-            {
                 context.RoomData.Where(x => x.UsersNow > 0).UpdateFromQuery(x => new RoomData { UsersNow = 0 });
-            }
+
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
             //    session.Query<RoomData>().Where(x => x.UsersNow > 0 || x.UsersNow < 0).Update(x => new RoomData { UsersNow = 0 });
@@ -290,17 +283,13 @@ namespace Helios.Storage.Access
         /// <summary>
         /// Update users count
         /// </summary>
-        public static void SetVisitorCount(int roomId, int visitorsNow)
+        public static void SetVisitorCount(this StorageContext context, int roomId, int visitorsNow)
         {
-            using (var context = new StorageContext())
-            {
-
-                context.RoomData.Where(x => x.Id == roomId).UpdateFromQuery(x => new RoomData { UsersNow = visitorsNow });
-                //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
-                //{
-                //    session.Query<RoomData>().Where(x => x.Id == roomId).Update(x => new RoomData { UsersNow = visitorsNow });
-                //}
-            }
+            context.RoomData.Where(x => x.Id == roomId).UpdateFromQuery(x => new RoomData { UsersNow = visitorsNow });
+            //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
+            //{
+            //    session.Query<RoomData>().Where(x => x.Id == roomId).Update(x => new RoomData { UsersNow = visitorsNow });
+            //}
         }
     }
 }

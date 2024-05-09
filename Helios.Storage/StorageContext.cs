@@ -15,10 +15,7 @@ namespace Helios.Storage
 {
     public class StorageContext : DbContext
     {
-
-        #region Fields
-
-        private static readonly StorageContext m_SessionFactoryBuilder = new StorageContext();
+        #region Properties
 
         public DbSet<UserData> UserData { get; set; }
         public DbSet<AvatarData> AvatarData { get; set; }
@@ -40,21 +37,24 @@ namespace Helios.Storage
         public DbSet<NavigatorCategoryData> NavigatorCategoryData { get; set; }
         public DbSet<RoomData> RoomData { get; set; }
         public DbSet<RoomModelData> RoomModelData { get; set; }
+        public DbSet<RoomRightsData> RoomRightsData { get; set; }
         public DbSet<TagData> TagData { get; set; }
         public DbSet<CurrencyData> CurrencyData { get; set; }
         public DbSet<SubscriptionData> SubscriptionData { get; set; }
         public DbSet<SubscriptionGiftData> SubscriptionGiftData { get; set; }
+        public DbSet<PagesData> PagesData { get; set; }
+        public DbSet<PagesHabbletData> PagesHabbletData { get; set; }
         public DbSet<GroupData> Groups { get; set; }
         public DbSet<GroupMembershipData> GroupMemberships { get; set; }
         public DbSet<GroupBadgeElementData> GroupBadgeElementData { get; set; }
 
         #endregion
 
-        #region Properties
+        #region Constructor
 
-        public static StorageContext Instance
+        public StorageContext(DbContextOptions<StorageContext> options) : base(options)
         {
-            get { return m_SessionFactoryBuilder; }
+
         }
 
         #endregion
@@ -63,9 +63,7 @@ namespace Helios.Storage
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder
-                //.UseLazyLoadingProxies()
-                .UseMySQL("server=localhost;database=helios;user=root;password=123");
+            base.OnConfiguring(optionsBuilder);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -80,6 +78,7 @@ namespace Helios.Storage
                 entity.Property(x => x.Email).HasColumnName("email");
                 entity.Property(x => x.Password).HasColumnName("password").HasDefaultValue();
                 entity.Property(x => x.Birthday).HasColumnName("birthday").HasDefaultValue();
+                entity.Property(x => x.DirectEmail).HasColumnName("direct_mail").HasDefaultValue();
                 entity.Property(x => x.JoinDate).HasColumnName("join_date").HasDefaultValue();
                 entity.Property(x => x.LastOnline).HasColumnName("last_online").HasDefaultValue();
 
@@ -100,6 +99,7 @@ namespace Helios.Storage
                 entity.Property(x => x.Rank).HasColumnName("rank").HasDefaultValue();
                 entity.Property(x => x.Credits).HasColumnName("credits").HasDefaultValue();
                 entity.Property(x => x.Motto).HasColumnName("motto").HasDefaultValue();
+                entity.Property(x => x.FavouriteGroupId).HasColumnName("favourite_group_id").HasDefaultValue();
                 entity.Property(x => x.CreatedDate).HasColumnName("created_date").HasDefaultValue();
                 entity.Property(x => x.LastOnline).HasColumnName("last_online").HasDefaultValue();
 
@@ -110,6 +110,11 @@ namespace Helios.Storage
                 entity.HasOne(e => e.User)
                       .WithMany(p => p.Avatars)
                       .HasForeignKey(x => x.UserId);
+
+                entity.HasOne(x => x.FavouriteGroup)
+                    .WithOne()
+                    .HasForeignKey<AvatarData>(x => x.FavouriteGroupId)
+                    .IsRequired(false);
             });
 
             modelBuilder.Entity<AuthenicationTicketData>(entity =>
@@ -348,8 +353,7 @@ namespace Helios.Storage
 
                 entity.HasOne(x => x.Room)
                     .WithOne(x => x.PublicItem)
-                    .HasForeignKey<RoomData>(x => x.Id)
-                    .IsRequired(false);
+                    .HasForeignKey<RoomData>(x => x.Id);
 
             });
 
@@ -368,11 +372,12 @@ namespace Helios.Storage
             {
                 entity.ToTable("room");
                 entity.HasKey(x => x.Id);
-                entity.Property(x => x.Id).HasColumnName("id");
+                entity.Property(x => x.Id).HasColumnName("id").HasDefaultValue();
                 entity.Property(x => x.OwnerId).HasColumnName("owner_id");
                 entity.Property(x => x.Name).HasColumnName("name");
                 entity.Property(x => x.Description).HasColumnName("description");
                 entity.Property(x => x.CategoryId).HasColumnName("category_id").HasDefaultValue();
+                entity.Property(x => x.GroupId).HasColumnName("group_id");
                 entity.Property(x => x.UsersNow).HasColumnName("visitors_now").HasDefaultValue();
                 entity.Property(x => x.UsersMax).HasColumnName("visitors_max").HasDefaultValue();
                 entity.Property(x => x.Status).HasColumnName("status").HasDefaultValue().HasConversion(
@@ -418,6 +423,30 @@ namespace Helios.Storage
                     .WithMany(c => c.Rooms)
                     .HasForeignKey(x => x.CategoryId);
 
+                entity.HasOne(x => x.GroupData)
+                    .WithOne(x => x.RoomData)
+                    .HasForeignKey<GroupData>(x => x.RoomId)
+                    .IsRequired(false);
+
+            });
+
+            modelBuilder.Entity<RoomRightsData>(entity =>
+            {
+                entity.ToTable("room_rights");
+                
+                entity.HasKey(x => new { x.AvatarId, x.RoomId });
+                entity.HasIndex(x => new { x.AvatarId, x.RoomId }).IsUnique();
+
+                entity.Property(x => x.AvatarId).HasColumnName("avatar_id").HasDefaultValue();
+                entity.Property(x => x.RoomId).HasColumnName("room_id").HasDefaultValue();
+
+                entity.HasOne(x => x.RoomData)
+                    .WithMany(x => x.Rights)
+                    .HasForeignKey(x => x.RoomId);
+
+                entity.HasOne(x => x.AvatarData)
+                    .WithMany(x => x.RoomRights)
+                    .HasForeignKey(x => x.AvatarId);
             });
 
             modelBuilder.Entity<TagData>(entity =>
@@ -435,7 +464,7 @@ namespace Helios.Storage
 
             modelBuilder.Entity<RoomModelData>(entity =>
             {
-                entity.ToTable("room_model");
+                entity.ToTable("room_models");
                 entity.HasKey(x => x.Id);
                 entity.Property(x => x.Id).HasColumnName("id");
                 entity.Property(x => x.Model).HasColumnName("model");
@@ -481,20 +510,49 @@ namespace Helios.Storage
                 entity.Property(x => x.DurationRequirement).HasColumnName("duration_requirement");
             });
 
+            modelBuilder.Entity<PagesData>(entity =>
+            {
+                entity.ToTable("cms_pages");
+                entity.HasKey(x => x.Id);
+                entity.Property(x => x.ParentId).HasColumnName("parent_id").HasDefaultValue();
+                entity.Property(x => x.OrderId).HasColumnName("order_id").HasDefaultValue();
+                entity.Property(x => x.Label).HasColumnName("label").HasDefaultValue();
+                entity.Property(x => x.Link).HasColumnName("link").HasDefaultValue();
+                entity.Property(x => x.Page).HasColumnName("page").HasDefaultValue();
+                entity.Property(x => x.Colour).HasColumnName("colour")
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (PageColor)Enum.Parse(typeof(PageColor), v));
+
+                entity.Property(x => x.MinimumRank).HasColumnName("minimum_rank").HasDefaultValue();
+                entity.Property(x => x.RequiresLogin).HasColumnName("requires_login").HasDefaultValue();
+                entity.Property(x => x.RequiresLogout).HasColumnName("requires_logout").HasDefaultValue();
+            });
+
+            modelBuilder.Entity<PagesHabbletData>(entity =>
+            {
+                entity.ToTable("cms_pages_habblets");
+                entity.HasKey(x => new { x.Page, x.OrderId, x.Widget, x.Column });
+                entity.Property(x => x.Page).HasColumnName("Page");
+                entity.Property(x => x.OrderId).HasColumnName("order_id").HasDefaultValue();
+                entity.Property(x => x.Widget).HasColumnName("widget");
+                entity.Property(x => x.Column).HasColumnName("column");
+            });
+
             modelBuilder.Entity<GroupData>(entity =>
             {
                 entity.ToTable("group");
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasColumnName("id").IsRequired();
+                entity.Property(e => e.Id).HasColumnName("id").HasDefaultValue();
                 entity.Property(e => e.Name).HasColumnName("name").IsRequired().HasMaxLength(45);
                 entity.Property(e => e.Description).HasColumnName("description").IsRequired().HasColumnType("mediumtext");
                 entity.Property(e => e.OwnerId).HasColumnName("owner_id").IsRequired();
                 entity.Property(e => e.RoomId).HasColumnName("room_id").IsRequired().HasDefaultValue(0);
-                entity.Property(e => e.Badge).HasColumnName("badge").IsRequired().HasColumnType("mediumtext").HasDefaultValue("b0503Xs09114s05013s05015");
+                entity.Property(e => e.Badge).HasColumnName("badge").IsRequired().HasColumnType("mediumtext");
+                entity.Property(e => e.Colour1).HasColumnName("colour1").IsRequired();
+                entity.Property(e => e.Colour2).HasColumnName("colour2").IsRequired();
                 entity.Property(e => e.Recommended).HasColumnName("recommended").IsRequired().HasDefaultValue(0);
                 entity.Property(e => e.Background).HasColumnName("background").IsRequired().HasMaxLength(255).HasDefaultValue("bg_colour_08");
-                entity.Property(e => e.Views).HasColumnName("views").IsRequired().HasDefaultValue(0);
-                entity.Property(e => e.Topics).HasColumnName("topics").IsRequired().HasDefaultValue(0);
                 entity.Property(e => e.GroupType).HasColumnName("group_type").IsRequired().HasColumnType("tinyint").HasDefaultValue(0);
                 entity.Property(e => e.ForumType).HasColumnName("forum_type").IsRequired().HasColumnType("tinyint").HasDefaultValue(0);
                 entity.Property(e => e.ForumPermissionType).HasColumnName("forum_permission_type").IsRequired().HasColumnType("tinyint").HasDefaultValue(0);
@@ -504,6 +562,16 @@ namespace Helios.Storage
                 entity.HasMany(g => g.GroupMemberships)
                     .WithOne(m => m.Group)
                     .HasForeignKey(m => m.GroupId);
+
+                entity.HasOne(x => x.RoomData)
+                    .WithOne(x => x.GroupData)
+                    .HasForeignKey<RoomData>(x => x.GroupId)
+                    .IsRequired(false);
+
+                entity.HasOne(e => e.OwnerData)
+                    .WithMany(c => c.Groups)
+                    .HasForeignKey(x => x.OwnerId)
+                    .IsRequired(false);
             });
 
             modelBuilder.Entity<GroupMembershipData>(entity =>
@@ -520,22 +588,14 @@ namespace Helios.Storage
             modelBuilder.Entity<GroupBadgeElementData>(entity =>
             {
                 entity.ToTable("group_badge_elements");
-                entity.HasKey(x => new { x.BaseTemplate, x.SymbolTemplate, x.Type });
-                entity.Property(x => x.BaseTemplate).HasColumnName("base_template");
-                entity.Property(x => x.SymbolTemplate).HasColumnName("symbol_template");
+                entity.HasKey(x => new { x.Id, x.FirstValue, x.SecondValue, x.Type });
+                entity.HasKey(x => x.Id);
+                entity.Property(x => x.Id).HasColumnName("id");
+                //entity.Property(x => x.clientid).HasColumnName("clientid");
+                entity.Property(x => x.FirstValue).HasColumnName("first_value");
+                entity.Property(x => x.SecondValue).HasColumnName("second_value");
                 entity.Property(x => x.Type).HasColumnName("type");
             });
-        }
-
-
-
-        public void Init()
-        {
-            using (var context = new StorageContext())
-            {
-                context.Database.EnsureCreated();
-            }
-
         }
     }
 

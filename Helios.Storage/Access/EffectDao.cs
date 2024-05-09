@@ -1,14 +1,16 @@
 ﻿using Helios.Storage.Models.Effect;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Helios.Storage.Access
 {
-    public class EffectDao
+    public static class EffectDao
     {
         /// <summary>
         /// Create items and refresh it with their filled in database ID's
         /// </summary>
-        public static void SaveEffects(List<EffectData> items)
+        public static void SaveEffects(this StorageContext context, List<EffectData> items)
         {
             /*using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             {
@@ -35,7 +37,7 @@ namespace Helios.Storage.Access
         /// <summary>
         /// Get list of all effects for user
         /// </summary>
-        public static List<EffectData> GetUserEffects(int avatarId)
+        public static List<EffectData> GetUserEffects(this StorageContext context, int avatarId)
         {
             /*using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             {
@@ -47,7 +49,7 @@ namespace Helios.Storage.Access
         /// <summary>
         /// Get list of all effects for user
         /// </summary>
-        public static List<EffectSettingData> GetEffectSettings()
+        public static List<EffectSettingData> GetEffectSettings(this StorageContext context)
         {
             /*using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             {
@@ -59,7 +61,7 @@ namespace Helios.Storage.Access
         /// <summary>
         /// Update effect instance
         /// </summary>
-        public static void UpdateEffect(EffectData effectData)
+        public static void UpdateEffect(this StorageContext context, EffectData effectData)
         {
             /*using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             {
@@ -82,7 +84,7 @@ namespace Helios.Storage.Access
         /// Delete effect
         /// </summary>
         /// <param name="effectId"></param>
-        public static void DeleteEffect(EffectData effectData)
+        public static void DeleteEffect(this StorageContext context, EffectData effectData)
         {
             /*using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             {

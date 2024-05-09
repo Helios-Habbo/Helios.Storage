@@ -1,4 +1,8 @@
-﻿namespace Helios.Storage.Models.Effect
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Helios.Storage.Models.Effect
 {
     public class EffectSettingData
     {
