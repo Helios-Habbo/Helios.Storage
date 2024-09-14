@@ -27,17 +27,18 @@ namespace Helios.Storage.Access
             //        .List<RoomData>() as List<RoomData>;
             //}
 
-                return context.RoomData
-                    .Include(x => x.OwnerData)
-                    .Include(x => x.Category)
-                    .Include(x => x.Tags)
-                    .Where(x =>
-                        x.Name.ToLower().Contains(query.ToLower()) ||
-                        x.OwnerData.Name.ToLower().Contains(query.ToLower()))
-                    .OrderByDescending(x => x.UsersNow)
-                    .OrderByDescending(x => x.Rating)
-                    .Take(roomLimit)
-                    .ToList();
+            return context.RoomData
+                .Include(x => x.OwnerData)
+                .Include(x => x.Category)
+                .Include(x => x.Tags)
+                .Include(x => x.GroupData)
+                .Where(x =>
+                    x.Name.ToLower().Contains(query.ToLower()) ||
+                    x.OwnerData.Name.ToLower().Contains(query.ToLower()))
+                .OrderByDescending(x => x.UsersNow)
+                .OrderByDescending(x => x.Rating)
+                .Take(roomLimit)
+                .ToList();
         }
 
         /// <summary>
@@ -63,16 +64,17 @@ namespace Helios.Storage.Access
             //        .List<RoomData>() as List<RoomData>;
             //}
 
-                return context.RoomData
-                    .Include(x => x.OwnerData)
-                    .Include(x => x.Tags)
-                    .Include(x => x.Category)
-                    .Where(x =>
-                        x.Tags.Any(t => t.Text == tag))
-                    .OrderByDescending(x => x.UsersNow)
-                    .OrderByDescending(x => x.Rating)
-                    .Take(roomLimit)
-                    .ToList();
+            return context.RoomData
+                .Include(x => x.OwnerData)
+                .Include(x => x.Tags)
+                .Include(x => x.Category)
+                .Include(x => x.GroupData)
+                .Where(x =>
+                    x.Tags.Any(t => t.Text == tag))
+                .OrderByDescending(x => x.UsersNow)
+                .OrderByDescending(x => x.Rating)
+                .Take(roomLimit)
+                .ToList();
         }
 
         /// <summary>
@@ -94,15 +96,16 @@ namespace Helios.Storage.Access
             //        .List() as List<RoomData>;
             //}
 
-                return context.RoomData
-                    .Include(x => x.OwnerData)
-                    .Include(x => x.Category)
-                    .Include(x => x.Tags)
-                    .Where(x => x.OwnerId > 0)
-                    .OrderByDescending(x => x.UsersNow)
-                    .OrderByDescending(x => x.Rating)
-                    .Take(resultsLimit)
-                    .ToList();
+            return context.RoomData
+                .Include(x => x.OwnerData)
+                .Include(x => x.Category)
+                .Include(x => x.Tags)
+                .Include(x => x.GroupData)
+                .Where(x => x.OwnerId > 0)
+                .OrderByDescending(x => x.UsersNow)
+                .OrderByDescending(x => x.Rating)
+                .Take(resultsLimit)
+                .ToList();
 
         }
 
@@ -123,14 +126,15 @@ namespace Helios.Storage.Access
             //}
 
 
-                return context.RoomData
-                    .Include(x => x.OwnerData)
-                    .Include(x => x.Category)
-                    .Include(x => x.Tags)
-                    .Where(x => x.OwnerId == avatarId)
-                    .OrderByDescending(x => x.UsersNow)
-                    .OrderByDescending(x => x.Rating)
-                    .ToList();
+            return context.RoomData
+                .Include(x => x.OwnerData)
+                .Include(x => x.Category)
+                .Include(x => x.Tags)
+                .Include(x => x.GroupData)
+                .Where(x => x.OwnerId == avatarId)
+                .OrderByDescending(x => x.UsersNow)
+                .OrderByDescending(x => x.Rating)
+                .ToList();
 
         }
 
@@ -145,7 +149,7 @@ namespace Helios.Storage.Access
             //    return session.QueryOver<TagData>(() => tagDataAlias).Where(() => tagDataAlias.RoomId == roomId).List() as List<TagData>;
             //}
 
-                return context.TagData.Where(x => x.RoomId == roomId).ToList();
+            return context.TagData.Where(x => x.RoomId == roomId).ToList();
         }
 
         /// <summary>
@@ -158,7 +162,7 @@ namespace Helios.Storage.Access
             //    return session.QueryOver<RoomData>().Where(x => x.OwnerId == avatarId).RowCount();
             //}
 
-                return context.RoomData.Count(x => x.OwnerId == avatarId);
+            return context.RoomData.Count(x => x.OwnerId == avatarId);
         }
 
         /// <summary>
@@ -172,7 +176,7 @@ namespace Helios.Storage.Access
             //    return session.QueryOver<RoomModelData>().List() as List<RoomModelData>;
             //}
 
-                return context.RoomModelData.ToList();
+            return context.RoomModelData.ToList();
         }
 
         /// <summary>
@@ -184,12 +188,13 @@ namespace Helios.Storage.Access
             //{
             //    return session.QueryOver<RoomData>().Where(x => x.Id == roomId).Take(1).SingleOrDefault();
             //}
-  
-                return context.RoomData
-                    .Include(x => x.OwnerData)
-                    .Include(x => x.Category)
-                    .Include(x => x.Tags)
-                    .FirstOrDefault(x => x.Id == roomId);
+
+            return context.RoomData
+                .Include(x => x.OwnerData)
+                .Include(x => x.Category)
+                .Include(x => x.Tags)
+                .Include(x => x.GroupData)
+                .FirstOrDefault(x => x.Id == roomId);
         }
 
         public static List<RoomRightsData> GetRoomRights(this StorageContext context, int roomId)
@@ -199,8 +204,8 @@ namespace Helios.Storage.Access
 
         public static void ClearRoomRights(this StorageContext context, int roomId)
         {
-             context.RoomRightsData.Where(x => x.RoomId == roomId).DeleteFromQuery();
-                context.SaveChanges();
+            context.RoomRightsData.Where(x => x.RoomId == roomId).DeleteFromQuery();
+            context.SaveChanges();
         }
 
         public static void AddRights(this StorageContext context, int avatarId, int roomId)
@@ -221,8 +226,8 @@ namespace Helios.Storage.Access
         /// </summary>
         public static void SaveRoom(this StorageContext context, RoomData data)
         {
-                context.RoomData.Update(data);
-                context.SaveChanges();
+            context.RoomData.Update(data);
+            context.SaveChanges();
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
@@ -247,8 +252,8 @@ namespace Helios.Storage.Access
         /// </summary>
         public static void NewRoom(this StorageContext context, RoomData data)
         {
-                context.RoomData.Add(data);
-                context.SaveChanges();
+            context.RoomData.Add(data);
+            context.SaveChanges();
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
@@ -272,7 +277,7 @@ namespace Helios.Storage.Access
         /// </summary>
         public static void ResetVisitorCounts(this StorageContext context)
         {
-                context.RoomData.Where(x => x.UsersNow > 0).UpdateFromQuery(x => new RoomData { UsersNow = 0 });
+            context.RoomData.Where(x => x.UsersNow > 0).UpdateFromQuery(x => new RoomData { UsersNow = 0 });
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
