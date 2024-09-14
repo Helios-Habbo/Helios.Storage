@@ -18,6 +18,7 @@ namespace Helios.Storage
         #region Properties
 
         public DbSet<UserData> UserData { get; set; }
+        public DbSet<UserSessionData> UserSessionData { get; set; }
         public DbSet<AvatarData> AvatarData { get; set; }
         public DbSet<AuthenicationTicketData> AuthenicationTicketData { get; set; }
         public DbSet<SettingsData> SettingsData { get; set; }
@@ -88,6 +89,15 @@ namespace Helios.Storage
                 entity.HasMany(e => e.Avatars)
                       .WithOne(c => c.User)
                       .HasForeignKey(x => x.Id);
+            });
+
+            modelBuilder.Entity<UserSessionData>(entity =>
+            {
+                entity.ToTable("user_sessions");
+                entity.HasKey(x => x.SessionId);
+                entity.Property(x => x.SessionId).HasColumnName("session_id");
+                entity.Property(x => x.UserId).HasColumnName("user_id");
+                entity.Property(x => x.ExpiryDate).HasColumnName("expiry_date");
             });
 
             modelBuilder.Entity<AvatarData>(entity =>
