@@ -9,6 +9,7 @@ namespace Helios.Storage.Models.Group
         public string FirstValue { get; set; }
         public string SecondValue { get; set; }
         public string Type { get; set; }
+        public bool Enabled { get; set; }
 
     }
 }

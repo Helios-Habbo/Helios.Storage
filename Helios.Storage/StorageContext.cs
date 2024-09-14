@@ -64,6 +64,9 @@ namespace Helios.Storage
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
+
+            optionsBuilder.EnableSensitiveDataLogging();
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -589,12 +592,12 @@ namespace Helios.Storage
             {
                 entity.ToTable("group_badge_elements");
                 entity.HasKey(x => new { x.Id, x.FirstValue, x.SecondValue, x.Type });
-                entity.HasKey(x => x.Id);
                 entity.Property(x => x.Id).HasColumnName("id");
                 //entity.Property(x => x.clientid).HasColumnName("clientid");
                 entity.Property(x => x.FirstValue).HasColumnName("first_value");
                 entity.Property(x => x.SecondValue).HasColumnName("second_value");
                 entity.Property(x => x.Type).HasColumnName("type");
+                entity.Property(x => x.Enabled).HasColumnName("enabled");
             });
         }
     }
