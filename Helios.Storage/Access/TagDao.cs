@@ -11,7 +11,7 @@ namespace Helios.Storage.Access
         /// </summary>
         public static void DeleteRoomTags(this StorageContext context, int roomId)
         {
-                context.RemoveRange(context.TagData.Where(x => x.RoomId == roomId).ToList());
+            context.RemoveRange(context.TagData.Where(x => x.RoomId == roomId).ToList());
             context.SaveChanges();
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
@@ -42,11 +42,11 @@ namespace Helios.Storage.Access
             //        .List<PopularTag>() as List<PopularTag>;
             //}
 
-                return context.TagData.Where(x => x.RoomId > 0)
-                    .GroupBy(x => x.Text)
-                    .OrderByDescending(x => x.Count())
-                    .Select(x => new PopularTag { Tag = x.Key, Quantity = x.Count() })
-                    .ToList();
+            return context.TagData.Where(x => x.RoomId > 0)
+                .GroupBy(x => x.Text)
+                .OrderByDescending(x => x.Count())
+                .Select(x => new PopularTag { Tag = x.Key, Quantity = x.Count() })
+                .ToList();
 
         }
 
@@ -56,8 +56,8 @@ namespace Helios.Storage.Access
         /// <returns></returns>
         public static void SaveTag(this StorageContext context, TagData tagData)
         {
-                context.TagData.Add(tagData);
-                context.SaveChanges();
+            context.TagData.Add(tagData);
+            context.SaveChanges();
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{

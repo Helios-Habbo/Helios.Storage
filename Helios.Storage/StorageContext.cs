@@ -455,9 +455,11 @@ namespace Helios.Storage
             modelBuilder.Entity<TagData>(entity =>
             {
                 entity.ToTable("tags");
-                entity.HasKey(x => new { x.AvatarId, x.RoomId, x.Text });
+                entity.HasKey(x => new { x.AvatarId, x.RoomId, x.GroupId, x.Text });
+                entity.HasIndex(x => new { x.AvatarId, x.RoomId, x.GroupId, x.Text }).IsUnique();
                 entity.Property(x => x.AvatarId).HasColumnName("avatar_id").HasDefaultValue();
                 entity.Property(x => x.RoomId).HasColumnName("room_id").HasDefaultValue();
+                entity.Property(x => x.GroupId).HasColumnName("group_id").HasDefaultValue();
                 entity.Property(x => x.Text).HasColumnName("text").HasDefaultValue();
 
                 entity.HasOne(x => x.RoomData)

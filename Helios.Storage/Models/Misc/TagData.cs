@@ -6,6 +6,7 @@ namespace Helios.Storage.Models.Misc
     {
         public virtual int AvatarId { get; set; }
         public virtual int RoomId { get; set; }
+        public virtual int GroupId { get; set; }
         public virtual string Text { get; set; }
 
         #region Constraints
