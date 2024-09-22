@@ -45,8 +45,8 @@ namespace Helios.Storage
         public DbSet<SubscriptionGiftData> SubscriptionGiftData { get; set; }
         public DbSet<PagesData> PagesData { get; set; }
         public DbSet<PagesHabbletData> PagesHabbletData { get; set; }
-        public DbSet<GroupData> Groups { get; set; }
-        public DbSet<GroupMembershipData> GroupMemberships { get; set; }
+        public DbSet<GroupData> GroupData { get; set; }
+        public DbSet<GroupMembershipData> GroupMembershipData { get; set; }
         public DbSet<GroupBadgeElementData> GroupBadgeElementData { get; set; }
 
         #endregion
@@ -568,11 +568,14 @@ namespace Helios.Storage
                 entity.Property(e => e.Colour2).HasColumnName("colour2").IsRequired();
                 entity.Property(e => e.Recommended).HasColumnName("recommended").IsRequired().HasDefaultValue(0);
                 entity.Property(e => e.Background).HasColumnName("background").IsRequired().HasMaxLength(255).HasDefaultValue("bg_colour_08");
-                entity.Property(e => e.GroupType).HasColumnName("group_type").IsRequired().HasColumnType("tinyint").HasDefaultValue(0);
+                entity.Property(e => e.GroupType).HasColumnName("group_type").IsRequired().HasColumnType("enum('OPEN','LOCKED','PRIVATE')").HasConversion(
+                    v => v.ToString(),
+                    v => (GroupType)Enum.Parse(typeof(GroupType), v));
                 entity.Property(e => e.ForumType).HasColumnName("forum_type").IsRequired().HasColumnType("tinyint").HasDefaultValue(0);
                 entity.Property(e => e.ForumPermissionType).HasColumnName("forum_permission_type").IsRequired().HasColumnType("tinyint").HasDefaultValue(0);
                 entity.Property(e => e.Alias).HasColumnName("alias").HasColumnType("varchar(45)");
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired().HasDefaultValueSql("current_timestamp()");
+                entity.Property(x => x.AllowMembersDecorate).HasColumnName("allow_members_decorate");
 
                 entity.HasMany(g => g.GroupMemberships)
                     .WithOne(m => m.Group)
@@ -592,12 +595,17 @@ namespace Helios.Storage
             modelBuilder.Entity<GroupMembershipData>(entity =>
             {
                 entity.ToTable("group_memberships");
-                entity.HasKey(e => new { e.UserId, e.GroupId });
-                entity.Property(e => e.UserId).HasColumnName("user_id").IsRequired();
+                entity.HasKey(e => new { e.AvatarId, e.GroupId });
+                entity.Property(e => e.AvatarId).HasColumnName("avatar_id").IsRequired();
                 entity.Property(e => e.GroupId).HasColumnName("group_id").IsRequired();
-                entity.Property(e => e.MemberRank).HasColumnName("member_rank").IsRequired().HasColumnType("enum('3','2','1')").HasDefaultValue("1");
-                entity.Property(e => e.IsPending).HasColumnName("is_pending").IsRequired().HasDefaultValue(0);
+                entity.Property(e => e.MemberType).HasColumnName("member_type").IsRequired().HasColumnType("enum('ADMIN','MEMBER','PENDING')").HasConversion(
+                    v => v.ToString(),
+                    v => (GroupMembershipType)Enum.Parse(typeof(GroupMembershipType), v)); ;
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired().HasDefaultValueSql("current_timestamp()");
+
+                entity.HasOne(g => g.Avatar)
+                    .WithMany(m => m.GroupMemberships)
+                    .HasForeignKey(m => m.AvatarId);
             });
 
             modelBuilder.Entity<GroupBadgeElementData>(entity =>

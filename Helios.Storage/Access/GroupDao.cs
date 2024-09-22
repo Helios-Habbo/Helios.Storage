@@ -11,9 +11,10 @@ namespace Helios.Storage.Access
     {
         public static GroupData GetGroup(this StorageContext context, int groupId)
         {
-            return context.Groups
+            return context.GroupData
                 .Include(x => x.OwnerData)
                 .Include(x => x.RoomData)
+                .Include(x => x.GroupMemberships)
                 .FirstOrDefault(x => x.Id == groupId);
         }
 
@@ -22,9 +23,18 @@ namespace Helios.Storage.Access
             return context.GroupBadgeElementData.Where(x => x.Enabled).ToList();
         }
 
+        public static List<GroupMembershipData> GetGroupMembers(this StorageContext context, int groupId)
+        {
+            return context.GroupMembershipData
+                    .Include(x => x.Group)
+                    .Include(x => x.Avatar)
+                .Where(x => x.GroupId == groupId)
+                .ToList();
+        }
+
         public static void SaveGroup(this StorageContext context, GroupData groupData)
         {
-            context.Groups.Update(groupData);
+            context.GroupData.Update(groupData);
             context.SaveChanges();
         }
     }

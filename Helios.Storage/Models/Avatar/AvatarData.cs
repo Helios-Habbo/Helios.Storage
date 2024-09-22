@@ -33,6 +33,7 @@ namespace Helios.Storage.Models.Avatar
         public virtual List<ItemData> Items { get; set; }
         public virtual List<RoomData> Rooms { get; set; }
         public virtual List<GroupData> Groups { get; set; }
+        public virtual List<GroupMembershipData> GroupMemberships { get; set; }
         public virtual List<AuthenicationTicketData> Tickets { get; set; }
         public virtual List<MessengerFriendData> Friends { get; set; }
         public virtual List<MessengerRequestData> Requests { get; set; }
