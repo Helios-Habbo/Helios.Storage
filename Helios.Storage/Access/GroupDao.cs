@@ -15,6 +15,7 @@ namespace Helios.Storage.Access
                 .Include(x => x.OwnerData)
                 .Include(x => x.RoomData)
                 .Include(x => x.GroupMemberships)
+                    .ThenInclude(x => x.Avatar)
                 .FirstOrDefault(x => x.Id == groupId);
         }
 
@@ -32,7 +33,25 @@ namespace Helios.Storage.Access
                 .ToList();
         }
 
-        public static void SaveGroup(this StorageContext context, GroupData groupData)
+        public static void UpdateMembership(this StorageContext context, GroupMembershipData data)
+        {
+            context.GroupMembershipData.Update(data);
+            context.SaveChanges();
+        }
+
+        public static void AddMembership(this StorageContext context, GroupMembershipData data)
+        {
+            context.GroupMembershipData.Add(data);
+            context.SaveChanges();
+        }
+
+        public static void DeleteMembership(this StorageContext context, GroupMembershipData data)
+        {
+            context.GroupMembershipData.Remove(data);
+            context.SaveChanges();
+        }
+
+        public static void UpdateGroup(this StorageContext context, GroupData groupData)
         {
             context.GroupData.Update(groupData);
             context.SaveChanges();

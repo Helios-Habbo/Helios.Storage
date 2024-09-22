@@ -54,7 +54,7 @@ namespace Helios.Storage.Access
         /// Save avatar data
         /// </summary>
         /// <param name="avatarData">the avatar data to save</param>
-        public static void Update(this StorageContext context, AvatarData avatarData)
+        public static void UpdateAvatar(this StorageContext context, AvatarData avatarData)
         {
             context.Attach(avatarData)
                 .Property(x => x.Credits)
