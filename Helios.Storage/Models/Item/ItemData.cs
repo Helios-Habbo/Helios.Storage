@@ -5,9 +5,9 @@ namespace Helios.Storage.Models.Item
 {
     public class ItemData
     {
-        public ItemData() => Id = Guid.NewGuid().ToString();
+        public ItemData() => Id = Guid.NewGuid();
 
-        public virtual string Id { get; set; }
+        public virtual Guid Id { get; set; }
         public virtual int OrderId { get; set; }
         public virtual int OwnerId { get; set; }
         public virtual AvatarData OwnerData { get; set; }

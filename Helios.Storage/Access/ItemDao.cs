@@ -44,7 +44,7 @@ namespace Helios.Storage.Access
         {
                 return context.ItemData
                     .Include(x => x.OwnerData)
-                    .SingleOrDefault(x => x.Id == itemId);
+                    .SingleOrDefault(x => x.Id.ToString() == itemId);
         }
 
         /// <summary>

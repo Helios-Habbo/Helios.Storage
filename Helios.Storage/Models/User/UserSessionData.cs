@@ -7,9 +7,7 @@ namespace Helios.Storage.Models.User
 {
     public class UserSessionData
     {
-        public UserSessionData() => SessionId = Guid.NewGuid().ToString();
-
-        public virtual string SessionId { get; set; }
+        public virtual Guid SessionId { get; set; }
         public virtual int UserId { get; set; }
         public virtual DateTime ExpiryDate { get; set; }
     }
