@@ -66,8 +66,8 @@ namespace Helios.Storage
         {
             base.OnConfiguring(optionsBuilder);
 
+            optionsBuilder.UseMySQL();
             optionsBuilder.EnableSensitiveDataLogging();
-
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -161,6 +161,7 @@ namespace Helios.Storage
                 entity.Property(x => x.OrderId).HasColumnName("order_id");
                 entity.Property(x => x.OwnerId).HasColumnName("avatar_id");
                 entity.Property(x => x.RoomId).HasColumnName("room_id").HasDefaultValue(null);
+                entity.Property(x => x.GroupId).HasColumnName("group_id").HasDefaultValue(null);
                 entity.Property(x => x.DefinitionId).HasColumnName("definition_id");
                 entity.Property(x => x.X).HasColumnName("x").HasDefaultValue();
                 entity.Property(x => x.Y).HasColumnName("y").HasDefaultValue();

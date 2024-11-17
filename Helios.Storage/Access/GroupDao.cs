@@ -9,14 +9,33 @@ namespace Helios.Storage.Access
 {
     public static class GroupDao
     {
-        public static GroupData GetGroup(this StorageContext context, int groupId)
+        public static List<GroupData> GetGroupsByMembership(this StorageContext context, int avatarId)
         {
             return context.GroupData
                 .Include(x => x.OwnerData)
                 .Include(x => x.RoomData)
                 .Include(x => x.GroupMemberships)
                     .ThenInclude(x => x.Avatar)
-                .FirstOrDefault(x => x.Id == groupId);
+                .Where(x => x.OwnerId == avatarId || x.GroupMemberships.Any(x => x.AvatarId == avatarId))
+                .Distinct()
+                .ToList();
+        }
+
+        public static GroupData GetGroup(this StorageContext context, int groupId)
+        {
+            return context.GetGroups(new List<int> { groupId }).FirstOrDefault();
+        }
+
+
+        public static List<GroupData> GetGroups(this StorageContext context, List<int> groupIds)
+        {
+            return context.GroupData
+                .Include(x => x.OwnerData)
+                .Include(x => x.RoomData)
+                .Include(x => x.GroupMemberships)
+                    .ThenInclude(x => x.Avatar)
+                .Where(x => groupIds.Any(gId => gId == x.Id))
+                .ToList();
         }
 
         public static List<GroupBadgeElementData> GetGroupBadgeElementData(this StorageContext context)
