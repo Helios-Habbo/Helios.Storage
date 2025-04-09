@@ -352,6 +352,7 @@ namespace Helios.Storage
                 entity.ToTable("navigator_official_rooms");
                 entity.HasKey(x => x.BannerId);
                 entity.Property(x => x.BannerId).HasColumnName("banner_id");
+                entity.Property(x => x.OrderId).HasColumnName("order_id");
                 entity.Property(x => x.ParentId).HasColumnName("parent_id");
                 entity.Property(x => x.BannerType).HasColumnName("banner_type").HasConversion(
                     v => v.ToString(),
@@ -364,6 +365,7 @@ namespace Helios.Storage
                 entity.Property(x => x.Description).HasColumnName("description");
                 entity.Property(x => x.DescriptionEntry).HasColumnName("description_entry");
                 entity.Property(x => x.Image).HasColumnName("image_url");
+                entity.Property(x => x.ThumbnailLayout).HasColumnName("thumbnail_layout");
 
                 entity.HasOne(x => x.Room)
                     .WithOne(x => x.PublicItem)

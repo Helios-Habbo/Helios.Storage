@@ -24,7 +24,7 @@ namespace Helios.Storage.Access
                 currencyList.Add(new CurrencyData { AvatarId = avatarId, SeasonalType = SeasonalCurrencyType.STARS, Balance = 0 });
                 currencyList.Add(new CurrencyData { AvatarId = avatarId, SeasonalType = SeasonalCurrencyType.CLOUDS, Balance = 0 });
                 currencyList.Add(new CurrencyData { AvatarId = avatarId, SeasonalType = SeasonalCurrencyType.DIAMONDS, Balance = 0 });
-                currencyList.Add(new CurrencyData { AvatarId = avatarId, SeasonalType = SeasonalCurrencyType.DUCKETS, Balance = 0 });
+                currencyList.Add(new CurrencyData { AvatarId = avatarId, SeasonalType = SeasonalCurrencyType.DEFAULT, Balance = 0 });
                 currencyList.Add(new CurrencyData { AvatarId = avatarId, SeasonalType = SeasonalCurrencyType.LOYALTY_POINTS, Balance = 0 });
 
                 context.AddRange(currencyList);

@@ -6,6 +6,7 @@ namespace Helios.Storage.Models.Navigator
     {
         public virtual int BannerId { get; set; }
         public virtual int ParentId { get; set; }
+        public virtual int OrderId { get; set; }
         public virtual BannerType BannerType { get; set; }
         public virtual int RoomId { get; set; }
         public virtual ImageType ImageType { get; set; }
@@ -13,6 +14,7 @@ namespace Helios.Storage.Models.Navigator
         public virtual string Description { get; set; }
         public virtual int DescriptionEntry { get; set; }
         public virtual string Image { get; set; }
+        public virtual int ThumbnailLayout { get; set; }
 
         #region Constraints
 

@@ -17,10 +17,17 @@ namespace Helios.Storage.Access
             //    return session.QueryOver<PublicItemData>().List() as List<PublicItemData>;//.Where(x => x.Room != null).ToList();
             //}
 
-            return context.PublicItemData
+            var publicItems = context.PublicItemData
                 .Include(x => x.Room).ThenInclude(x => x.Category)
                 .Include(x => x.Room).ThenInclude(x => x.OwnerData)
                 .ToList();
+
+            foreach (var publicItem in publicItems)
+            {
+                publicItem.OrderId = publicItem.ParentId > 0 ? publicItems.FirstOrDefault(x => x.ParentId == publicItem.ParentId).OrderId + 1 : publicItem.OrderId;
+            }
+
+            return publicItems.OrderBy(x => x.OrderId).ToList();
         }
 
         /// <summary>

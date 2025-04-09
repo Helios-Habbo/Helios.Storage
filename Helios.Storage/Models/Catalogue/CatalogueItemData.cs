@@ -8,7 +8,7 @@
         public virtual int OrderId { get; set; }
         public virtual int PriceCoins { get; set; }
         public virtual int PriceSeasonal { get; set; }
-        public virtual SeasonalCurrencyType SeasonalType { get; set; }
+        public virtual SeasonalCurrencyType? SeasonalType { get; set; }
         public virtual bool IsHidden { get; set; }
         public virtual int Amount { get; set; }
         public virtual int DefinitionId { get; set; }
@@ -25,6 +25,6 @@
         CLOUDS = 104,
         DIAMONDS = 105,
         LOYALTY_POINTS = 3,
-        DUCKETS = 0
+        DEFAULT = 0
     }
 }
