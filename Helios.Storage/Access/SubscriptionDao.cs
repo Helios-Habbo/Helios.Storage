@@ -1,4 +1,5 @@
 ﻿using Helios.Storage.Models.Subscription;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,8 +74,13 @@ namespace Helios.Storage.Access
         /// </summary>
         public static void SaveSubscriptionExpiry(this StorageContext context, int avatarId, DateTime expiry)
         {
-            context.SubscriptionData.Where(x => x.AvatarId == avatarId).UpdateFromQuery(x => new SubscriptionData { ExpireDate = expiry });
+            context.SubscriptionData.Where(x => x.AvatarId == avatarId)
+                .ExecuteUpdate(x =>
+                    x.SetProperty(u => u.ExpireDate, expiry)
+                );
+
             context.SaveChanges();
+        
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
@@ -88,9 +94,10 @@ namespace Helios.Storage.Access
         public static void SaveSubscriptionAge(this StorageContext context, int avatarId, long clubAge, DateTime clubAgeLastUpdate)
         {
             context.SubscriptionData.Where(x => x.AvatarId == avatarId)
-                .UpdateFromQuery(x => new SubscriptionData { SubscriptionAge = clubAge, SubscriptionAgeLastUpdated = clubAgeLastUpdate });
-
-            context.SaveChanges();
+                .ExecuteUpdate(x =>
+                    x.SetProperty(u => u.SubscriptionAge, clubAge)
+                    .SetProperty(u => u.SubscriptionAgeLastUpdated, clubAgeLastUpdate)
+                );
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
@@ -116,12 +123,10 @@ namespace Helios.Storage.Access
         /// </summary>
         public static void SaveGiftsRedeemable(this StorageContext context, int avatarId, int giftsRedeemable)
         {
-                //var entity = context.SubscriptionData.Attach(new SubscriptionData { avatarId = avatarId, GiftsRedeemable = giftsRedeemable });
-                //entity.Property(x => x.GiftsRedeemable).IsModified = true;
-                context.SubscriptionData.Where(x => x.AvatarId == avatarId)
-                    .UpdateFromQuery(x => new SubscriptionData { GiftsRedeemable = giftsRedeemable });
-
-                context.SaveChanges();
+            context.SubscriptionData.Where(x => x.AvatarId == avatarId)
+                .ExecuteUpdate(x =>
+                    x.SetProperty(u => u.GiftsRedeemable, giftsRedeemable)
+                );
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{

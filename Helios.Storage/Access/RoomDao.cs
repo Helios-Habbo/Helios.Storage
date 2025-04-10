@@ -1,7 +1,6 @@
 ﻿using Helios.Storage.Models.Misc;
 using Helios.Storage.Models.Room;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -204,8 +203,15 @@ namespace Helios.Storage.Access
 
         public static void ClearRoomRights(this StorageContext context, int roomId)
         {
+            /*
             context.RoomRightsData.Where(x => x.RoomId == roomId).DeleteFromQuery();
             context.SaveChanges();
+            */
+
+            context.RoomRightsData
+                .AsQueryable()
+                .Where(u => u.RoomId == roomId)
+                .ExecuteDelete();
         }
 
         public static void AddRights(this StorageContext context, int avatarId, int roomId)
@@ -216,8 +222,12 @@ namespace Helios.Storage.Access
 
         public static void RemoveRights(this StorageContext context, int avatarId, int roomId)
         {
-            context.RoomRightsData.Where(x => x.RoomId == roomId && x.AvatarId == avatarId).DeleteFromQuery();
-            context.SaveChanges();
+            //context.RoomRightsData.Where(x => x.RoomId == roomId && x.AvatarId == avatarId).DeleteFromQuery();
+            //context.SaveChanges();
+
+            context.RoomRightsData
+                .Where(x => x.RoomId == roomId && x.AvatarId == avatarId)
+                .ExecuteDelete();
         }
 
 
@@ -277,7 +287,10 @@ namespace Helios.Storage.Access
         /// </summary>
         public static void ResetVisitorCounts(this StorageContext context)
         {
-            context.RoomData.Where(x => x.UsersNow > 0).UpdateFromQuery(x => new RoomData { UsersNow = 0 });
+            context.RoomData.Where(x => x.UsersNow > 0)
+                .ExecuteUpdate(x =>
+                    x.SetProperty(u => u.UsersNow, 0)
+                );
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
@@ -290,7 +303,11 @@ namespace Helios.Storage.Access
         /// </summary>
         public static void SetVisitorCount(this StorageContext context, int roomId, int visitorsNow)
         {
-            context.RoomData.Where(x => x.Id == roomId).UpdateFromQuery(x => new RoomData { UsersNow = visitorsNow });
+            context.RoomData.Where(x => x.Id == roomId)
+                .ExecuteUpdate(x =>
+                    x.SetProperty(u => u.UsersNow, visitorsNow)
+                );
+            //.UpdateFromQuery(x => new RoomData { UsersNow = visitorsNow });
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())
             //{
             //    session.Query<RoomData>().Where(x => x.Id == roomId).Update(x => new RoomData { UsersNow = visitorsNow });

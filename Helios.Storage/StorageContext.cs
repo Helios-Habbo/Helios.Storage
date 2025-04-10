@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using Helios.Storage.Models.Group;
+﻿using Helios.Storage.Models.Group;
 using Helios.Storage.Models.Avatar;
 using Helios.Storage.Models.Catalogue;
 using Helios.Storage.Models.Item;
@@ -10,12 +8,18 @@ using Helios.Storage.Models.Navigator;
 using Helios.Storage.Models.Room;
 using Helios.Storage.Models.Subscription;
 using Helios.Storage.Models.User;
+using Microsoft.EntityFrameworkCore;
+using System;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace Helios.Storage
 {
     public class StorageContext : DbContext
     {
         #region Properties
+
+        public static MySqlServerVersion ServerVersion => new MySqlServerVersion(new Version(8, 0, 40));
 
         public DbSet<UserData> UserData { get; set; }
         public DbSet<UserSessionData> UserSessionData { get; set; }
@@ -53,6 +57,11 @@ namespace Helios.Storage
 
         #region Constructor
 
+        public StorageContext()
+        {
+
+        }
+
         public StorageContext(DbContextOptions<StorageContext> options) : base(options)
         {
 
@@ -64,10 +73,18 @@ namespace Helios.Storage
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            if (!optionsBuilder.IsConfigured)
+            {
+                var _configuration = new ConfigurationBuilder()
+                   .AddJsonFile("appsettings.json")
+                   .Build();
+
+                var connectionString = _configuration.GetConnectionString("ConnectionString");
+                optionsBuilder.UseMySql(connectionString, ServerVersion);
+            }
+
             base.OnConfiguring(optionsBuilder);
 
-            optionsBuilder.UseMySQL();
-            optionsBuilder.EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
