@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Helios.Storage.Models.Room;
+﻿using Helios.Storage.Models.Room;
+using System.Collections.Generic;
 
 namespace Helios.Storage.Models.Navigator
 {

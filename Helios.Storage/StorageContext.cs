@@ -1,17 +1,17 @@
-﻿using Helios.Storage.Models.Group;
-using Helios.Storage.Models.Avatar;
+﻿using Helios.Storage.Models.Avatar;
 using Helios.Storage.Models.Catalogue;
+using Helios.Storage.Models.Group;
 using Helios.Storage.Models.Item;
 using Helios.Storage.Models.Messenger;
 using Helios.Storage.Models.Misc;
 using Helios.Storage.Models.Navigator;
 using Helios.Storage.Models.Room;
+using Helios.Storage.Models.Site;
 using Helios.Storage.Models.Subscription;
 using Helios.Storage.Models.User;
 using Microsoft.EntityFrameworkCore;
-using System;
 using Microsoft.Extensions.Configuration;
-using System.IO;
+using System;
 
 namespace Helios.Storage
 {
@@ -47,11 +47,16 @@ namespace Helios.Storage
         public DbSet<CurrencyData> CurrencyData { get; set; }
         public DbSet<SubscriptionData> SubscriptionData { get; set; }
         public DbSet<SubscriptionGiftData> SubscriptionGiftData { get; set; }
-        public DbSet<PagesData> PagesData { get; set; }
-        public DbSet<PagesHabbletData> PagesHabbletData { get; set; }
         public DbSet<GroupData> GroupData { get; set; }
         public DbSet<GroupMembershipData> GroupMembershipData { get; set; }
         public DbSet<GroupBadgeElementData> GroupBadgeElementData { get; set; }
+
+        #endregion
+
+        #region CMS Properties
+        public DbSet<PagesData> PagesData { get; set; }
+        public DbSet<PagesHabbletData> PagesHabbletData { get; set; }
+        public DbSet<HousekeepingNotes> HousekeepingNotes { get; set; }
 
         #endregion
 
@@ -140,6 +145,11 @@ namespace Helios.Storage
                 entity.HasOne(e => e.User)
                       .WithMany(p => p.Avatars)
                       .HasForeignKey(x => x.UserId);
+
+
+                entity.HasMany(e => e.Badges)
+                      .WithOne(p => p.Avatar)
+                      .HasForeignKey(x => x.AvatarId);
 
                 entity.HasOne(x => x.FavouriteGroup)
                     .WithOne()
@@ -466,7 +476,7 @@ namespace Helios.Storage
             modelBuilder.Entity<RoomRightsData>(entity =>
             {
                 entity.ToTable("room_rights");
-                
+
                 entity.HasKey(x => new { x.AvatarId, x.RoomId });
                 entity.HasIndex(x => new { x.AvatarId, x.RoomId }).IsUnique();
 
@@ -572,6 +582,7 @@ namespace Helios.Storage
                 entity.Property(x => x.OrderId).HasColumnName("order_id").HasDefaultValue();
                 entity.Property(x => x.Widget).HasColumnName("widget");
                 entity.Property(x => x.Column).HasColumnName("column");
+                entity.Property(x => x.Visible).HasColumnName("visible");
             });
 
             modelBuilder.Entity<GroupData>(entity =>
@@ -638,6 +649,32 @@ namespace Helios.Storage
                 entity.Property(x => x.SecondValue).HasColumnName("second_value");
                 entity.Property(x => x.Type).HasColumnName("type");
                 entity.Property(x => x.Enabled).HasColumnName("enabled");
+            });
+
+            modelBuilder.Entity<HousekeepingNotes>(entity =>
+            {
+                entity.ToTable("cms_housekeeping_notes");
+                entity.HasKey(x => x.Id); ;
+                entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
+                entity.Property(e => e.AvatarId).HasColumnName("avatar_id");
+                entity.Property(e => e.CreatedDate).HasColumnName("created_date").ValueGeneratedOnAdd();
+                entity.Property(e => e.Title).HasColumnName("title").IsRequired();
+                entity.Property(e => e.Content).HasColumnName("content").IsRequired();
+
+                entity.HasOne(x => x.AvatarData)
+                .WithOne()
+                .HasPrincipalKey<HousekeepingNotes>(x => x.AvatarId)
+                .HasForeignKey<AvatarData>(x => x.Id);
+            });
+
+            modelBuilder.Entity<AvatarBadgeData>(entity =>
+            {
+                entity.ToTable("avatar_badges");
+                entity.HasKey(x => new { x.AvatarId, x.BadgeCode }); ;
+                entity.Property(e => e.AvatarId).HasColumnName("avatar_id");
+                entity.Property(e => e.BadgeCode).HasColumnName("badge_code");
+                entity.Property(e => e.SlotId).HasColumnName("slot_id").ValueGeneratedOnAdd();
+                entity.Property(e => e.Visible).HasColumnName("visible").ValueGeneratedOnAdd();
             });
         }
     }

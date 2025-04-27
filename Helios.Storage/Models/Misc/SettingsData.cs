@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Helios.Storage.Models.Misc
+﻿namespace Helios.Storage.Models.Misc
 {
     public class SettingsData
     {

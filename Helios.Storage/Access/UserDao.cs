@@ -12,9 +12,9 @@ namespace Helios.Storage.Access
         /// <param name="userData">the avatar data to save</param>
         public static void Update(this StorageContext context, UserData userData)
         {
-                context.Update(userData);
+            context.Update(userData);
 
-                context.SaveChanges();
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -22,9 +22,9 @@ namespace Helios.Storage.Access
         /// </summary>
         public static UserData GetByName(this StorageContext context, string email)
         {
-                return context.UserData
-                    .Include(x => x.Avatars)
-                    .FirstOrDefault(x => x.Email == email);
+            return context.UserData
+                .Include(x => x.Avatars)
+                .FirstOrDefault(x => x.Email == email);
         }
 
         /// <summary>
@@ -32,9 +32,9 @@ namespace Helios.Storage.Access
         /// </summary>
         public static UserData GetById(this StorageContext context, int id)
         {
-                return context.UserData
-                    .Include(x => x.Avatars)
-                    .FirstOrDefault(x => x.Id == id);
+            return context.UserData
+                .Include(x => x.Avatars)
+                .FirstOrDefault(x => x.Id == id);
         }
 
         /// <summary>
@@ -42,11 +42,11 @@ namespace Helios.Storage.Access
         /// </summary>
         public static string GetEmailById(this StorageContext context, int id)
         {
-                return context.UserData
-                    .Include(x => x.Avatars)
-                    .Where(x => x.Id == id)
-                    .Select(x => x.Email)
-                    .SingleOrDefault();
+            return context.UserData
+                .Include(x => x.Avatars)
+                .Where(x => x.Id == id)
+                .Select(x => x.Email)
+                .SingleOrDefault();
         }
 
         /// <summary>
@@ -54,10 +54,10 @@ namespace Helios.Storage.Access
         /// </summary>
         public static int GetIdByEmail(this StorageContext context, string email)
         {
-                return context.UserData
-                    .Include(x => x.Avatars)
-                    .Where(x => x.Email == email)
-                    .Select(x => x.Id).SingleOrDefault();
+            return context.UserData
+                .Include(x => x.Avatars)
+                .Where(x => x.Email == email)
+                .Select(x => x.Id).SingleOrDefault();
         }
     }
 }

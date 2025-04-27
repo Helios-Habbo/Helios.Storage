@@ -1,4 +1,4 @@
-﻿namespace Helios.Storage.Models.User
+﻿namespace Helios.Storage.Models.Site
 {
     public class PagesHabbletData
     {
@@ -6,6 +6,7 @@
         public virtual int OrderId { get; set; }
         public virtual string Widget { get; set; }
         public virtual string Column { get; set; }
+        public virtual bool Visible { get; set; }
     }
 
 }

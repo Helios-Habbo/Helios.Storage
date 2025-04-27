@@ -12,7 +12,7 @@ namespace Helios.Storage.Access
         /// </summary>
         public static List<ItemDefinitionData> GetDefinitions(this StorageContext context)
         {
-                return context.ItemDefinitionData.ToList();
+            return context.ItemDefinitionData.ToList();
         }
 
         /// <summary>
@@ -20,9 +20,9 @@ namespace Helios.Storage.Access
         /// </summary>
         public static List<ItemData> GetInventoryItems(this StorageContext context, int avatarId)
         {
-                return context.ItemData
-                    .Include(x => x.OwnerData)
-                    .Where(x => x.OwnerId == avatarId && x.RoomId == null).ToList();
+            return context.ItemData
+                .Include(x => x.OwnerData)
+                .Where(x => x.OwnerId == avatarId && x.RoomId == null).ToList();
         }
 
         /// <summary>
@@ -42,9 +42,9 @@ namespace Helios.Storage.Access
         /// <returns>the item</returns>
         public static ItemData GetItem(this StorageContext context, string itemId)
         {
-                return context.ItemData
-                    .Include(x => x.OwnerData)
-                    .SingleOrDefault(x => x.Id.ToString() == itemId);
+            return context.ItemData
+                .Include(x => x.OwnerData)
+                .SingleOrDefault(x => x.Id.ToString() == itemId);
         }
 
         /// <summary>
@@ -53,8 +53,8 @@ namespace Helios.Storage.Access
         /// <param name="itemDefinition"></param>
         public static void SaveDefinition(this StorageContext context, ItemDefinitionData itemDefinition)
         {
-                context.Update(itemDefinition);
-                context.SaveChanges();
+            context.Update(itemDefinition);
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -62,9 +62,9 @@ namespace Helios.Storage.Access
         /// </summary>
         public static void SaveItem(this StorageContext context, ItemData item)
         {
-                context.Update(item);
-                context.SaveChanges();
-                context.Entry(item).Reference(x => x.OwnerData).Load();
+            context.Update(item);
+            context.SaveChanges();
+            context.Entry(item).Reference(x => x.OwnerData).Load();
         }
 
 
@@ -86,9 +86,9 @@ namespace Helios.Storage.Access
         /// </summary>
         public static void CreateItem(this StorageContext context, ItemData item)
         {
-                context.Add(item);
-                context.SaveChanges();
-                context.Entry(item).Reference(x => x.OwnerData).Load();
+            context.Add(item);
+            context.SaveChanges();
+            context.Entry(item).Reference(x => x.OwnerData).Load();
         }
 
         /// <summary>

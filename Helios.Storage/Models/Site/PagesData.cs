@@ -1,4 +1,4 @@
-﻿namespace Helios.Storage.Models.User
+﻿namespace Helios.Storage.Models.Site
 {
     public class PagesData
     {

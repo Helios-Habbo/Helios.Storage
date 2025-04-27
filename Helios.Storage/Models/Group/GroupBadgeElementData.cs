@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.Design;
-
-namespace Helios.Storage.Models.Group
+﻿namespace Helios.Storage.Models.Group
 {
     public class GroupBadgeElementData
     {

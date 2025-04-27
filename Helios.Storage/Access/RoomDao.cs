@@ -237,6 +237,7 @@ namespace Helios.Storage.Access
         public static void SaveRoom(this StorageContext context, RoomData data)
         {
             context.RoomData.Update(data);
+            context.Entry(data).Property(x => x.Tags).IsModified = false;
             context.SaveChanges();
 
             //using (var session = SessionFactoryBuilder.Instance.SessionFactory.OpenSession())

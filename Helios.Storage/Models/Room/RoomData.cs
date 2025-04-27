@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using Helios.Storage.Models.Avatar;
+﻿using Helios.Storage.Models.Avatar;
 using Helios.Storage.Models.Group;
 using Helios.Storage.Models.Misc;
 using Helios.Storage.Models.Navigator;
+using System.Collections.Generic;
 
 namespace Helios.Storage.Models.Room
 {

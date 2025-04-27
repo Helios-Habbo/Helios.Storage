@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Helios.Storage.Models.Item
+﻿namespace Helios.Storage.Models.Item
 {
     public class ItemDefinitionData
     {

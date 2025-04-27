@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Helios.Storage.Models.Avatar;
+﻿using Helios.Storage.Models.Avatar;
+using System.Linq;
 
 namespace Helios.Storage.Access
 {
@@ -56,8 +56,8 @@ namespace Helios.Storage.Access
         /// </summary>
         public static void Update(this StorageContext context, AvatarSettingsData settingsData)
         {
-                context.AvatarSettingsData.Update(settingsData);
-                context.SaveChanges();
+            context.AvatarSettingsData.Update(settingsData);
+            context.SaveChanges();
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Helios.Storage.Models.Subscription
+﻿namespace Helios.Storage.Models.Subscription
 {
     public class SubscriptionGiftData
     {

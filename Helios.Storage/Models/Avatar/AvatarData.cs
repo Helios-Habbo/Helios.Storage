@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using Helios.Storage.Models.Entity;
+﻿using Helios.Storage.Models.Entity;
 using Helios.Storage.Models.Group;
 using Helios.Storage.Models.Item;
 using Helios.Storage.Models.Messenger;
 using Helios.Storage.Models.Room;
 using Helios.Storage.Models.User;
+using System;
+using System.Collections.Generic;
 
 namespace Helios.Storage.Models.Avatar
 {
@@ -30,6 +29,7 @@ namespace Helios.Storage.Models.Avatar
 
         #region Contraints
 
+        public virtual List<AvatarBadgeData> Badges { get; set; }
         public virtual List<ItemData> Items { get; set; }
         public virtual List<RoomData> Rooms { get; set; }
         public virtual List<GroupData> Groups { get; set; }

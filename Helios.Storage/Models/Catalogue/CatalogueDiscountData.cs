@@ -6,9 +6,9 @@ namespace Helios.Storage.Models.Catalogue
     {
         public virtual int PageId { get; set; }
         public virtual int PurchaseLimit { get; set; }
-        public virtual decimal DiscountBatchSize { get; set; }
-        public virtual decimal DiscountAmountPerBatch { get; set; }
-        public virtual decimal MinimumDiscountForBonus { get; set; }
+        public virtual int DiscountBatchSize { get; set; }
+        public virtual int DiscountAmountPerBatch { get; set; }
+        public virtual int MinimumDiscountForBonus { get; set; }
         public virtual DateTime? ExpireDate { get; set; }
     }
 }
