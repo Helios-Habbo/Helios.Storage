@@ -57,6 +57,8 @@ namespace Helios.Storage
         public DbSet<PagesData> PagesData { get; set; }
         public DbSet<PagesHabbletData> PagesHabbletData { get; set; }
         public DbSet<HousekeepingNotes> HousekeepingNotes { get; set; }
+        public DbSet<ExternalFlashTextsData> ExternalFlashTextsData { get; set; }
+        public DbSet<ExternalVariablesData> ExternalVariablesData { get; set; }
 
         #endregion
 
@@ -675,6 +677,22 @@ namespace Helios.Storage
                 entity.Property(e => e.BadgeCode).HasColumnName("badge_code");
                 entity.Property(e => e.SlotId).HasColumnName("slot_id").ValueGeneratedOnAdd();
                 entity.Property(e => e.Visible).HasColumnName("visible").ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<ExternalVariablesData>(entity =>
+            {
+                entity.ToTable("external_variables");
+                entity.HasKey(x => x.Key); ;
+                entity.Property(e => e.Key).HasColumnName("key");
+                entity.Property(e => e.Value).HasColumnName("value");
+            });
+
+            modelBuilder.Entity<ExternalFlashTextsData>(entity =>
+            {
+                entity.ToTable("external_flash_texts");
+                entity.HasKey(x => x.Key); ;
+                entity.Property(e => e.Key).HasColumnName("key");
+                entity.Property(e => e.Value).HasColumnName("value");
             });
         }
     }
